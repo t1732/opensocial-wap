@@ -7,8 +7,8 @@ module OpensocialWap::OAuth::Helpers
   class GreeHelper < BasicHelper
     def access_token
       if defined?(Rails::Railtie) && Rack::Request === @request
-        app_config = Rails.application.config
-        if app_config.respond_to?(:opensocial_wap) && app_config.opensocial_wap.url.call(@request).default[:format].in?([:local])
+        config = Rails.application.config
+        if config.respond_to?(:opensocial_wap) && config.opensocial_wap.url.call(@request).default[:format].in?([:local])
           return OAuth::AccessToken.new(consumer, @request.session[:oauth_token], @request.session[:oauth_token_secret])
         end
       end

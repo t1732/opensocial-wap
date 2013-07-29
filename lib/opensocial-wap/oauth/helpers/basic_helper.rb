@@ -1,10 +1,63 @@
+# -*- coding: utf-8 -*-
 require 'oauth'
 require 'oauth/signature/rsa/sha1'
 
 module OpensocialWap
   module OAuth
     module Helpers
+      # Opensocial 規約の共通処理
       class BasicHelper < Base
+
+        class << self
+          # FIXME: 以下はほぼ attr_accessor :xxx で済む
+
+          def consumer_key(arg = nil)
+            if arg
+              @consumer_key = arg
+            end
+            @consumer_key
+          end
+
+          def consumer_secret(arg = nil)
+            if arg
+              @consumer_secret = arg
+            end
+            @consumer_secret
+          end
+
+          def api_endpoint(arg = nil)
+            if arg
+              @api_endpoint = arg
+            end
+            @api_endpoint
+          end
+
+          def sp_api_endpoint(arg = nil)
+            if arg
+              @sp_api_endpoint = arg
+            end
+            @sp_api_endpoint || api_endpoint
+          end
+
+          def app_id(arg = nil)
+            if arg
+              @app_id = arg
+            end
+            @app_id
+          end
+
+          def proxy_class(arg = nil)
+            if arg
+              @proxy_class = arg
+            end
+            @proxy_class || DEFAULT_PROXY_CLASS
+          end
+
+          def configure(&block)
+            instance_eval(&block)
+            self
+          end
+        end
 
         DEFAULT_PROXY_CLASS = ::OpensocialWap::OAuth::RequestProxy::OAuthRackRequestProxy
 
@@ -15,8 +68,8 @@ module OpensocialWap
             :consumer_secret => self.class.consumer_secret,
             :token_secret => request_proxy.parameters['oauth_token_secret'] }
           @access_token = ::OAuth::AccessToken.new(consumer,
-                                                   request_proxy.parameters['oauth_token'],
-                                                   request_proxy.parameters['oauth_token_secret'])
+            request_proxy.parameters['oauth_token'],
+            request_proxy.parameters['oauth_token_secret'])
           signature = ::OAuth::Signature.build(request_proxy, opts)
 
           if logger = @request.logger
@@ -42,50 +95,15 @@ module OpensocialWap
           oauth_client_helper.header
         end
 
+        #
+        # FP, SPでendpointを切り替える
+        #
         def api_endpoint
-          self.class.api_endpoint
-        end
-
-        def self.configure(&block)
-          instance_eval(&block)
-          self
-        end
-
-        private
-
-        def self.consumer_key(arg = nil)
-          if arg
-            @consumer_key = arg
+          if @request.respond_to?(:mobile?) && @request.mobile?
+            self.class.api_endpoint
+          else
+            self.class.sp_api_endpoint
           end
-          @consumer_key if @consumer_key
-        end
-
-        def self.consumer_secret(arg = nil)
-          if arg
-            @consumer_secret = arg
-          end
-          @consumer_secret if @consumer_secret
-        end
-
-        def self.api_endpoint(arg = nil)
-          if arg
-            @api_endpoint = arg
-          end
-          @api_endpoint if @api_endpoint
-        end
-
-        def self.app_id(arg = nil)
-          if arg
-            @app_id = arg
-          end
-          @app_id if @app_id
-        end
-
-        def self.proxy_class(arg = nil)
-          if arg
-            @proxy_class = arg
-          end
-          @proxy_class || DEFAULT_PROXY_CLASS
         end
 
         def consumer

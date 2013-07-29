@@ -17,29 +17,5 @@ module OpensocialWap::OAuth::Helpers
       oauth_client_helper = ::OAuth::Client::Helper.new(api_request, opts.merge(options))
       oauth_client_helper.header
     end
-
-    #
-    # FP, SPでendpointを切り替える
-    #
-    def api_endpoint
-      if @request.respond_to?(:mobile?) && @request.mobile?
-        self.class.api_endpoint
-      else
-        self.class.sp_api_endpoint
-      end
-    end
-
-    private
-
-    #
-    # スマートフォン設定項目の追加
-    #
-    def self.sp_api_endpoint(arg = nil)
-      if arg
-        @sp_api_endpoint = arg
-      end
-      @sp_api_endpoint if @sp_api_endpoint
-    end
-
   end
 end

@@ -15,11 +15,12 @@ describe OpensocialWap::Platform do
       end
 
       it do
-        @config.opensocial_wap.oauth.helper_class.should                 == OpensocialWap::OAuth::Helpers::BasicHelper
+        @config.opensocial_wap.oauth.helper_class.should                 == OpensocialWap::OAuth::Helpers::GreeHelper
         @config.opensocial_wap.oauth.helper_class.proxy_class.should     == OpensocialWap::OAuth::RequestProxy::OAuthRackRequestProxyForGree
         @config.opensocial_wap.oauth.helper_class.consumer_key.should    == '(consumer_key)'
         @config.opensocial_wap.oauth.helper_class.consumer_secret.should == '(consumer_secret)'
         @config.opensocial_wap.oauth.helper_class.api_endpoint.should    == 'http://os-sb.gree.jp/api/rest/'
+        @config.opensocial_wap.oauth.helper_class.sp_api_endpoint.should == 'http://os-sb.gree.jp/api/rest/'
         @config.opensocial_wap.session_id.should_not == :parameter
       end
 

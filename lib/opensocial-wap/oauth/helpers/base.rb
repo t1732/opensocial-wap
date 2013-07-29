@@ -2,7 +2,6 @@ module OpensocialWap
   module OAuth
     module Helpers
       class Base
-
         def initialize(request = nil)
           @request = request
         end
@@ -12,11 +11,11 @@ module OpensocialWap
         end
 
         def authorization_header(api_request, options = nil)
-          raise NotImplementedError
+          raise NotImplementedError, "#{__method__} is not implemented"
         end
 
         def api_endpoint
-          raise NotImplementedError
+          raise NotImplementedError, "#{__method__} is not implemented"
         end
 
         def client_helper(*args)
