@@ -11,8 +11,6 @@ module OpensocialWap
         super
       end
 
-      private
-
       # opensocial_wap[:url].redirect で指定した形式のURLを返す.
       def _compute_redirect_to_location(options)
         url = super
